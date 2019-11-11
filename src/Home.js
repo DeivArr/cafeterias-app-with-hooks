@@ -1,29 +1,36 @@
-import React, {useState, useEffect} from 'react'
-import ComponentTest from  './ComponentTest';
+import React, {Component, useState, useEffect} from 'react'
+import ListComponent from  './ListComponent';
 import axios from 'axios';
 
-const Home = (props) => {  
-    const [cafeterias, setCafeterias] = useState([]);
-    
-    useEffect(() => {
+class Home extends Component{
+    state = {
+        cafeterias: []
+    }
+
+    componentDidMount(){
         axios.get('https://cafeterias-app.firebaseio.com/cafeterias.json').then(result => {
           const cafeteriasArray = [];
           const cafeteriasData = result.data;
           for(const key in cafeteriasData)
           {
-              if(cafeteriasData[key] != null)
-                setCafeterias(cafeterias.concat(key, cafeteriasData[key].name));
+            if(cafeteriasData[key] != null)
+                cafeteriasArray.push({name: cafeteriasData[key].name})
           }
-          
-          
+          this.setState({
+              cafeterias: cafeteriasArray
+          })
         });
-      }, []);
+    }
 
-    return (
-        <div>
-            <ComponentTest list = {cafeterias} />
-        </div>
-    );
+    render(){
+        return(
+            <div>
+                {
+                    <ListComponent list = {this.state.cafeterias} />
+                }
+            </div> 
+        )
+    }
 }
 
 export default Home;
